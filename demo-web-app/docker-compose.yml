@@ -3,8 +3,8 @@ version: '3.4'
 networks:
   default:
     driver: overlay
-    driver_opts:
-      com.docker.network.driver.mtu: 1460
+    # driver_opts:
+    #   com.docker.network.driver.mtu: 1460
   # backend:
   #   external:
   #     name: backend
