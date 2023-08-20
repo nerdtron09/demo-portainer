@@ -1,0 +1,41 @@
+version: '3.4'
+
+networks:
+  default:
+    driver: overlay
+    driver_opts:
+      com.docker.network.driver.mtu: 1460
+  # backend:
+  #   external:
+  #     name: backend
+      
+services:
+  main_proxy: 
+    image: nginx:latest
+    ports:
+      - "80:80"
+    networks:
+      - default
+      - backend
+    environment:
+      LISTEN_PORT: "80"
+      DB_HOST: "mysql-host-url"
+      DB_PASS: "changeme123"
+      DB_PORT: "3306"
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+        monitor: 20s
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+        window: 120s
+      mode: replicated
+      replicas: 3
+      placement:
+        constraints:
+          - node.labels.acceptServices == 1
